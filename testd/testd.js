@@ -6,7 +6,7 @@ function preload() {
 	game.load.spritesheet('02', 'tour.png', 40, 40);
 
     game.load.tilemap('jeu', 'jeu.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.image('tiles', 'assets3.png');
+    game.load.image('tiles', 'assetsvm.png');
 }
 
 var points = [];
@@ -96,4 +96,5 @@ function update() {
 
 	currentPoint.position.copyFrom(game.input.activePointer.position);
 }
+
 
