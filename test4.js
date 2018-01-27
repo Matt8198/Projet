@@ -1,5 +1,5 @@
 
-var game = new Phaser.Game(1280,720, Phaser.AUTO, 'phaser-example', { preload: preload, create: create });
+var game = new Phaser.Game(1280, 720, Phaser.AUTO, 'phaser-example', { preload: preload, create: create });
 
 function preload() {
 
@@ -15,7 +15,7 @@ function preload() {
     //  The final one tells Phaser the foramt of the map data, in this case it's a JSON file exported from the Tiled map editor.
     //  This could be Phaser.Tilemap.CSV too.
 
-    game.load.tilemap('jeu', 'mapv2.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('mario', 'super_mario.json', null, Phaser.Tilemap.TILED_JSON);
 
     //  Next we load the tileset. This is just an image, loaded in via the normal way we load images:
 
@@ -31,7 +31,7 @@ function create() {
     game.stage.backgroundColor = '#787878';
 
     //  The 'mario' key here is the Loader key given in game.load.tilemap
-    map = game.add.tilemap('jeu');
+    map = game.add.tilemap('mario');
 
     //  The first parameter is the tileset name, as specified in the Tiled map editor (and in the tilemap json file)
     //  The second parameter maps this name to the Phaser.Cache key 'tiles'
@@ -45,3 +45,4 @@ function create() {
     layer.resizeWorld();
 
 }
+
