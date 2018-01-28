@@ -2,10 +2,10 @@ var game = new Phaser.Game(1280, 720, Phaser.AUTO, 'phaser-example',
 { preload: preload, create: create, update: update});
 
 function preload() {
-	game.load.spritesheet('01', 'tour.png', 40, 80);
+	game.load.spritesheet('01', 'tour.png', 40, 40);
 
     game.load.tilemap('jeu', 'jeu.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.image('tiles', 'assetsvm.png');
+    game.load.image('tiles', 'assetsv3.png');
 }
 
 var antenne_posable = [32, 33, 41, 42, 43, 11, 51, 21, 22, 23, 31,71,81,92,93,91,73,72];
@@ -19,7 +19,9 @@ var currentPoint;
 var over = false;
 var width = 40;
 var traceur = [];
-
+var graphics;
+var maxRayon = 300;
+var interRayon = 100;
 var map;
 var layer;
 
@@ -99,13 +101,44 @@ function create() {
 	currentPoint.anchor.set(0.5);
     currentPoint.visible = false;
 
+	var antenne = game.add.sprite(29*40,5*40, '01', 1);
+    antennes.push(antenne);
+	pos_antennes.push([5,29]);
+	
 	game.input.onTap.add(onTapHandler, this);
     traceur = zeros([H/width,W/width]);
-    traceur[4][29] = 1;
+    traceur[5][29] = 1;
     console.log("traceurbefore",traceur);
-    var temp = motif(3,[4,29]);
-    updateTraceur(traceur,temp);
+	
+    var temp = motif(4,[5,29]);
+    //updateTraceur(traceur,temp);
+	
     console.log("traceurafter",traceur);
+	console.log(pos_antennes);
+
+	graphics = game.add.graphics(0, 0);	
+	
+}
+
+function convertPixeltoGrid(a,b){
+	return [ Math.trunc(a/width),Math.trunc(b/width)];
+	
+}
+
+function voisin(temp1,temp2){
+	var a1 = motif(4,temp1);
+	var a2 = motif(4,temp2);
+	console.log("a1",a1);
+	console.log("a2",a2);
+	
+	for (var i=0;i<a1.length;i++){
+		for (var j=0;j<a2.length;j++){
+			if ((a1[i][0]==a2[j][0]) && (a1[i][1]==a2[j][1]) ){
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 function onTapHandler() {
@@ -118,31 +151,34 @@ function onTapHandler() {
         var posy = ((Math.trunc(game.input.activePointer.position.y/width)+1)*width - Math.trunc(width/2));
         var grille_x = Math.trunc(posx/width);
         var grille_y = Math.trunc(posy/width);
-        for (i = 0 ; i < pos_antennes.length ; i++ ){
-            if (arraysEqual(pos_antennes[i],[posx,posy])){
+        for (i = 0 ; i < antennes.length ; i++ ){
+            if (arraysEqual([antennes[i].x,antennes[i].y],[posx,posy])){
                 flag = false;
                 break;
             }
         }
 
         console.log("valeur de la tuille->",(map.layers[0].data[grille_y][grille_x].index),"pos de la grille->",grille_y,grille_x);
-        if (flag == true &&(antenne_posable.indexOf(map.layers[0].data[grille_y][grille_x].index)) != -1 ){
+        if ((flag == true &&(antenne_posable.indexOf(map.layers[0].data[grille_y][grille_x].index)) != -1  ) && (voisin(pos_antennes[pos_antennes.length-1],[grille_y,grille_x])==true) ){
             var antenne = game.add.sprite(posx,posy, '01', 1);
+			console.log("coucou2", convertPixeltoGrid(antennes[0].position.y,antennes[0].position.x));
             antennes.push(antenne);
-            pos_antennes.push([posx,posy]);
+            pos_antennes.push([grille_y,grille_x]);
             console.log("traceurbefore",traceur);
-            var temp = motif(4,[grille_y,grille_x]);
-            updateTraceur(traceur,temp);
+            //var temp = motif(4,[grille_y,grille_x]);
+            //updateTraceur(traceur,temp);
             console.log("traceurafter",traceur);
 
-            img.anchor.set(0.5,0.8);
+            antenne.anchor.set(0.5,0.8);
+			console.log("posantennes2",pos_antennes[pos_antennes.length-2]);
+			console.log("clic",[grille_x,grille_y]);
         }
-
+		
     }
 }
 
 function update() {
+	
 	currentPoint.position.copyFrom(game.input.activePointer.position);
 }
-
 
